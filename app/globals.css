@@ -1443,8 +1443,12 @@ footer > span {
   }
 
   .privacy-pill {
-    font-size: 10px;
-    padding: 8px 10px;
+    font-size: 0;
+    padding: 10px;
+  }
+
+  .language-switcher button {
+    padding-inline: 8px;
   }
 
   .brand small {

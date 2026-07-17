@@ -42,15 +42,23 @@ interface Transaction {
 
 const fieldOptions: MappingValue[] = ["ignore", "date", "reference", "description", "debit", "credit", "amount", "balance", "counterparty"];
 
+const locales: Record<Language, string> = {
+  vi: "vi-VN",
+  en: "en-US",
+  ja: "ja-JP",
+  zh: "zh-CN",
+  ko: "ko-KR",
+};
+
 const fieldAliases: Record<CanonicalKey, string[]> = {
-  date: ["ngay giao dich", "ngay gd", "transaction date", "posting date", "ngay", "取引日", "日付"],
-  reference: ["so chung tu", "so ct", "ma giao dich", "transaction id", "reference", "ref", "取引番号", "参照番号"],
-  description: ["noi dung giao dich", "dien giai", "description", "remark", "noi dung", "摘要", "取引内容"],
-  debit: ["phat sinh no", "ghi no", "debit", "withdrawal", "tien ra", "出金", "支払"],
-  credit: ["phat sinh co", "ghi co", "credit", "deposit", "tien vao", "入金", "預入"],
-  amount: ["so tien", "amount", "transaction amount", "gia tri", "金額", "取引金額"],
-  balance: ["so du cuoi", "so du", "balance", "closing balance", "残高"],
-  counterparty: ["nguoi nhan", "nguoi chuyen", "doi tac", "beneficiary", "counterparty", "取引先", "受取人", "依頼人"],
+  date: ["ngay giao dich", "ngay gd", "transaction date", "posting date", "ngay", "取引日", "日付", "交易日期", "记账日期", "日期", "거래일자", "거래일", "일자"],
+  reference: ["so chung tu", "so ct", "ma giao dich", "transaction id", "reference", "ref", "取引番号", "参照番号", "交易编号", "参考号", "流水号", "凭证号", "거래번호", "참조번호", "전표번호"],
+  description: ["noi dung giao dich", "dien giai", "description", "remark", "noi dung", "摘要", "取引内容", "交易说明", "交易内容", "备注", "적요", "거래내용", "내용"],
+  debit: ["phat sinh no", "ghi no", "debit", "withdrawal", "tien ra", "出金", "支払", "借方", "支出", "付款金额", "출금", "지급", "차변"],
+  credit: ["phat sinh co", "ghi co", "credit", "deposit", "tien vao", "入金", "預入", "贷方", "收入", "收款金额", "입금", "수입", "대변"],
+  amount: ["so tien", "amount", "transaction amount", "gia tri", "金額", "取引金額", "金额", "交易金额", "금액", "거래금액"],
+  balance: ["so du cuoi", "so du", "balance", "closing balance", "残高", "余额", "账户余额", "잔액"],
+  counterparty: ["nguoi nhan", "nguoi chuyen", "doi tac", "beneficiary", "counterparty", "取引先", "受取人", "依頼人", "交易对方", "对方户名", "收款人", "付款人", "거래처", "수취인", "송금인"],
 };
 
 const demoFiles: StatementFile[] = [
@@ -83,7 +91,10 @@ function inferField(header: string): MappingValue {
   const normalized = normalizeText(header);
 
   for (const [key, aliases] of Object.entries(fieldAliases) as [CanonicalKey, string[]][]) {
-    if (aliases.some((alias) => normalized === alias || normalized.includes(alias))) {
+    if (aliases.some((alias) => {
+      const normalizedAlias = normalizeText(alias);
+      return normalized === normalizedAlias || normalized.includes(normalizedAlias);
+    })) {
       return key;
     }
   }
@@ -215,14 +226,14 @@ function parseDate(value: unknown) {
 function classifyTransaction(description: string, kind: Transaction["kind"]) {
   const text = normalizeText(description);
   const rules: [CategoryKey, string[]][] = [
-    ["payroll", ["luong", "nhan vien", "bao hiem", "給与", "従業員", "社会保険"]],
-    ["tax", ["thue", "ngan sach", "kho bac", "税", "国庫"]],
-    ["bankFees", ["phi quan ly", "phi giao dich", "sms banking", "phi dich vu", "手数料", "口座管理"]],
-    ["suppliers", ["ncc", "nha cung cap", "thanh toan", "tien thue", "tien dien", "仕入", "支払", "家賃", "電気"]],
-    ["finance", ["lai tien gui", "lai suat", "利息"]],
+    ["payroll", ["luong", "nhan vien", "bao hiem", "給与", "従業員", "社会保険", "工资", "员工", "社保", "급여", "직원", "보험"]],
+    ["tax", ["thue", "ngan sach", "kho bac", "税", "国庫", "国库", "财政", "세금", "국고"]],
+    ["bankFees", ["phi quan ly", "phi giao dich", "sms banking", "phi dich vu", "手数料", "口座管理", "手续费", "账户管理费", "短信服务费", "수수료", "계좌관리"]],
+    ["suppliers", ["ncc", "nha cung cap", "thanh toan", "tien thue", "tien dien", "仕入", "支払", "家賃", "電気", "供应商", "付款", "房租", "电费", "采购", "공급업체", "결제", "임대료", "전기요금", "구매"]],
+    ["finance", ["lai tien gui", "lai suat", "利息", "存款利息", "이자", "예금이자"]],
   ];
 
-  return rules.find(([, words]) => words.some((word) => text.includes(word)))?.[0] ?? (kind === "Thu" ? "customerIncome" : "otherExpense");
+  return rules.find(([, words]) => words.some((word) => text.includes(normalizeText(word))))?.[0] ?? (kind === "Thu" ? "customerIncome" : "otherExpense");
 }
 
 function getMappedValue(statement: StatementFile, row: Record<string, unknown>, key: CanonicalKey) {
@@ -265,8 +276,7 @@ function normalizeStatements(statements: StatementFile[]) {
 }
 
 function formatMoney(value: number, language: Language) {
-  const locale = language === "vi" ? "vi-VN" : language === "ja" ? "ja-JP" : "en-US";
-  return new Intl.NumberFormat(locale).format(value);
+  return new Intl.NumberFormat(locales[language]).format(value);
 }
 
 function exportRows(transactions: Transaction[], copy: MessageSet) {
@@ -312,13 +322,15 @@ export default function Home() {
 
   useEffect(() => {
     const stored = window.localStorage.getItem("mach-tien-language");
-    if (stored === "vi" || stored === "en" || stored === "ja") {
+    if (stored === "vi" || stored === "en" || stored === "ja" || stored === "zh" || stored === "ko") {
       setLanguage(stored);
       return;
     }
 
     const browserLanguage = window.navigator.language.toLowerCase();
-    if (browserLanguage.startsWith("ja")) setLanguage("ja");
+    if (browserLanguage.startsWith("zh")) setLanguage("zh");
+    else if (browserLanguage.startsWith("ko")) setLanguage("ko");
+    else if (browserLanguage.startsWith("ja")) setLanguage("ja");
     else if (browserLanguage.startsWith("en")) setLanguage("en");
   }, []);
 
