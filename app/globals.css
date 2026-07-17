@@ -63,6 +63,10 @@ a {
   text-decoration: none;
 }
 
+main {
+  overflow-x: clip;
+}
+
 .site-header {
   align-items: center;
   display: flex;
@@ -97,6 +101,7 @@ a {
 .brand > span:last-child {
   display: grid;
   gap: 2px;
+  min-width: 0;
 }
 
 .brand strong {
@@ -111,6 +116,40 @@ a {
   font-weight: 700;
   letter-spacing: 0.13em;
   text-transform: uppercase;
+}
+
+.header-actions {
+  align-items: center;
+  display: flex;
+  gap: 12px;
+}
+
+.language-switcher {
+  align-items: center;
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(11, 107, 77, 0.16);
+  border-radius: 999px;
+  display: flex;
+  padding: 3px;
+}
+
+.language-switcher button {
+  background: transparent;
+  border: 0;
+  border-radius: 999px;
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 10px;
+  font-weight: 800;
+  min-height: 28px;
+  padding: 6px 10px;
+  transition: background 160ms ease, color 160ms ease;
+  white-space: nowrap;
+}
+
+.language-switcher button.active {
+  background: var(--green);
+  color: white;
 }
 
 .privacy-pill {
@@ -670,6 +709,7 @@ a {
 
 .mapping-table-wrap,
 .master-table-wrap {
+  -webkit-overflow-scrolling: touch;
   overflow-x: auto;
 }
 
@@ -1266,11 +1306,24 @@ footer > span {
   .export-card {
     min-height: 0;
   }
+
+  .export-card p {
+    max-width: 680px;
+  }
 }
 
 @media (max-width: 760px) {
   .site-header {
+    gap: 14px;
     padding: 20px;
+  }
+
+  .header-actions {
+    gap: 8px;
+  }
+
+  .language-switcher button {
+    padding-inline: 9px;
   }
 
   .privacy-pill {
@@ -1295,6 +1348,10 @@ footer > span {
 
   .hero-copy > p {
     font-size: 16px;
+  }
+
+  .hero h1 {
+    overflow-wrap: anywhere;
   }
 
   .note-one { right: 0; }
@@ -1338,6 +1395,15 @@ footer > span {
     width: 100%;
   }
 
+  .file-identity,
+  .file-identity div {
+    min-width: 0;
+  }
+
+  .file-identity strong {
+    overflow-wrap: anywhere;
+  }
+
   .insights-section {
     padding: 75px 20px 90px;
   }
@@ -1366,8 +1432,39 @@ footer > span {
 }
 
 @media (max-width: 520px) {
+  .site-header {
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .header-actions {
+    justify-content: space-between;
+    width: 100%;
+  }
+
+  .privacy-pill {
+    font-size: 10px;
+    padding: 8px 10px;
+  }
+
+  .brand small {
+    letter-spacing: 0.08em;
+  }
+
   .hero h1 {
-    font-size: 48px;
+    font-size: clamp(38px, 13vw, 48px);
+    line-height: 1;
+  }
+
+  .eyebrow {
+    align-items: flex-start;
+    font-size: 10px;
+    line-height: 1.5;
+  }
+
+  .eyebrow::before {
+    flex: 0 0 24px;
+    margin-top: 7px;
   }
 
   .hero-visual {
@@ -1382,6 +1479,10 @@ footer > span {
   .statement-card {
     padding: 22px;
     top: 28px;
+  }
+
+  .statement-total strong {
+    font-size: 30px;
   }
 
   .floating-note {
@@ -1406,6 +1507,67 @@ footer > span {
   .chart-panel,
   .export-card {
     padding: 22px;
+  }
+
+  .file-card-header {
+    align-items: flex-start;
+    gap: 14px;
+    padding: 17px;
+  }
+
+  .remove-button {
+    flex: 0 0 auto;
+  }
+
+  .source-control {
+    padding: 15px 17px;
+  }
+
+  .mapping-table th,
+  .mapping-table td {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .category-item > div {
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .category-item span:first-child {
+    min-width: 0;
+  }
+
+  .category-item strong {
+    flex: 0 0 auto;
+  }
+
+  .source-strip > div {
+    gap: 14px;
+    padding: 18px;
+  }
+
+  .master-panel .panel-heading {
+    padding: 20px;
+  }
+
+  .export-heading {
+    align-items: flex-start;
+    margin-top: 68px;
+  }
+
+  .template-picker {
+    gap: 10px;
+  }
+
+  .template-picker b {
+    flex: 0 0 auto;
+  }
+
+  .primary-button,
+  .secondary-button,
+  .outline-button {
+    white-space: normal;
   }
 
   .panel-heading {
