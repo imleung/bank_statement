@@ -125,6 +125,49 @@ function IssueBadges({ issues, copy }: { issues: IssueCode[]; copy: MessageSet }
   );
 }
 
+function MoneyInput({
+  ariaLabel,
+  language,
+  name,
+  value,
+  onChange,
+}: {
+  ariaLabel: string;
+  language: Language;
+  name: string;
+  value: number;
+  onChange: (value: number) => void;
+}) {
+  const [isEditing, setIsEditing] = useState(false);
+  const [draft, setDraft] = useState(String(value));
+
+  useEffect(() => {
+    if (!isEditing) setDraft(String(value));
+  }, [isEditing, value]);
+
+  return (
+    <input
+      className="money-input"
+      aria-label={ariaLabel}
+      name={name}
+      type="text"
+      inputMode="decimal"
+      autoComplete="off"
+      value={isEditing ? draft : formatMoney(value, language)}
+      onFocus={() => {
+        setDraft(String(value));
+        setIsEditing(true);
+      }}
+      onBlur={() => {
+        const nextValue = Number(draft.trim().replace(",", "."));
+        if (Number.isFinite(nextValue)) onChange(nextValue);
+        setIsEditing(false);
+      }}
+      onChange={(event) => setDraft(event.currentTarget.value)}
+    />
+  );
+}
+
 export default function Home() {
   const [language, setLanguage] = useState<Language>("vi");
   const [statements, setStatements] = useState<StatementFile[]>([]);
@@ -648,7 +691,7 @@ export default function Home() {
           </div>
 
           <article className="master-panel">
-            <div className="panel-heading"><div><span>{copy.insights.master}</span><h3>{transactions.length} {copy.insights.merged}</h3></div><small>{copy.actions.editHint}</small></div>
+            <div className="panel-heading"><div><span>{copy.insights.master}</span><h3>{transactions.length} {copy.insights.merged}</h3></div><small>{copy.actions.editHint} · {copy.insights.scroll}</small></div>
 
             <div className="transaction-filters">
               <label className="filter-search"><span>{copy.filters.search}</span><input name="transaction-search" type="search" autoComplete="off" placeholder={copy.filters.searchPlaceholder} value={filters.query} onChange={(event) => setFilters((current) => ({ ...current, query: event.target.value }))} /></label>
@@ -664,20 +707,31 @@ export default function Home() {
               <>
                 <div className="master-table-wrap desktop-transactions">
                   <table className="master-table editable-table">
+                    <colgroup>
+                      <col className="column-date" />
+                      <col className="column-source" />
+                      <col className="column-description" />
+                      <col className="column-counterparty" />
+                      <col className="column-money" />
+                      <col className="column-money" />
+                      <col className="column-balance" />
+                      <col className="column-category" />
+                      <col className="column-action" />
+                    </colgroup>
                     <thead><tr>{copy.insights.tableHeaders.map((header) => <th key={header}>{header}</th>)}<th>{copy.actions.action}</th></tr></thead>
                     <tbody>
                       {filteredTransactions.map((item) => {
                         const issues = validation.issuesById.get(item.id) ?? [];
                         return (
                           <tr className={issues.length > 0 ? "has-issues" : ""} key={item.id}>
-                            <td><input aria-label={copy.insights.tableHeaders[0]} value={item.date} placeholder="YYYY-MM-DD" inputMode="numeric" onChange={(event) => updateTransaction(item.id, { date: event.target.value })} /></td>
+                            <td><input aria-label={copy.insights.tableHeaders[0]} name={`${item.id}-date`} type="date" autoComplete="off" value={item.date} onChange={(event) => updateTransaction(item.id, { date: event.target.value })} /></td>
                             <td><strong>{item.source}</strong><small>{item.reference || "—"}</small></td>
-                            <td><textarea aria-label={copy.insights.tableHeaders[2]} rows={2} value={item.description} onChange={(event) => updateTransaction(item.id, { description: event.target.value })} /><IssueBadges issues={issues} copy={copy} /></td>
-                            <td><input aria-label={copy.insights.tableHeaders[3]} value={item.counterparty} onChange={(event) => updateTransaction(item.id, { counterparty: event.target.value })} /></td>
-                            <td><input aria-label={copy.insights.tableHeaders[4]} type="number" step="any" inputMode="decimal" value={item.debit} onChange={(event) => updateTransaction(item.id, { debit: Number(event.target.value) || 0 })} /></td>
-                            <td><input aria-label={copy.insights.tableHeaders[5]} type="number" step="any" inputMode="decimal" value={item.credit} onChange={(event) => updateTransaction(item.id, { credit: Number(event.target.value) || 0 })} /></td>
-                            <td><input aria-label={copy.insights.tableHeaders[6]} type="number" step="any" inputMode="decimal" value={item.balance} onChange={(event) => updateTransaction(item.id, { balance: Number(event.target.value) || 0 })} /><small>{item.currency}</small></td>
-                            <td><select aria-label={copy.insights.tableHeaders[7]} value={item.category} onChange={(event) => updateTransaction(item.id, { category: event.target.value as CategoryKey })}>{categoryKeys.map((category) => <option value={category} key={category}>{copy.categories[category]}</option>)}</select></td>
+                            <td><textarea aria-label={copy.insights.tableHeaders[2]} name={`${item.id}-description`} autoComplete="off" rows={2} value={item.description} onChange={(event) => updateTransaction(item.id, { description: event.target.value })} /><IssueBadges issues={issues} copy={copy} /></td>
+                            <td><input aria-label={copy.insights.tableHeaders[3]} name={`${item.id}-counterparty`} autoComplete="off" value={item.counterparty} onChange={(event) => updateTransaction(item.id, { counterparty: event.target.value })} /></td>
+                            <td><MoneyInput ariaLabel={copy.insights.tableHeaders[4]} name={`${item.id}-debit`} value={item.debit} language={language} onChange={(value) => updateTransaction(item.id, { debit: value })} /></td>
+                            <td><MoneyInput ariaLabel={copy.insights.tableHeaders[5]} name={`${item.id}-credit`} value={item.credit} language={language} onChange={(value) => updateTransaction(item.id, { credit: value })} /></td>
+                            <td><MoneyInput ariaLabel={copy.insights.tableHeaders[6]} name={`${item.id}-balance`} value={item.balance} language={language} onChange={(value) => updateTransaction(item.id, { balance: value })} /><small>{item.currency}</small></td>
+                            <td><select aria-label={copy.insights.tableHeaders[7]} name={`${item.id}-category`} value={item.category} onChange={(event) => updateTransaction(item.id, { category: event.target.value as CategoryKey })}>{categoryKeys.map((category) => <option value={category} key={category}>{copy.categories[category]}</option>)}</select></td>
                             <td><button className="row-delete" type="button" onClick={() => removeTransaction(item.id)}>{copy.actions.delete}</button></td>
                           </tr>
                         );
@@ -693,15 +747,15 @@ export default function Home() {
                       <article className={`transaction-card ${issues.length > 0 ? "has-issues" : ""}`} key={item.id}>
                         <div className="transaction-card-heading"><div><strong>{item.source}</strong><small>{item.reference || "—"}</small></div><span>{item.currency}</span></div>
                         <IssueBadges issues={issues} copy={copy} />
-                        <label><span>{copy.insights.tableHeaders[0]}</span><input value={item.date} placeholder="YYYY-MM-DD" inputMode="numeric" onChange={(event) => updateTransaction(item.id, { date: event.target.value })} /></label>
-                        <label><span>{copy.insights.tableHeaders[2]}</span><textarea rows={2} value={item.description} onChange={(event) => updateTransaction(item.id, { description: event.target.value })} /></label>
-                        <label><span>{copy.insights.tableHeaders[3]}</span><input value={item.counterparty} onChange={(event) => updateTransaction(item.id, { counterparty: event.target.value })} /></label>
+                        <label><span>{copy.insights.tableHeaders[0]}</span><input name={`${item.id}-mobile-date`} type="date" autoComplete="off" value={item.date} onChange={(event) => updateTransaction(item.id, { date: event.target.value })} /></label>
+                        <label><span>{copy.insights.tableHeaders[2]}</span><textarea name={`${item.id}-mobile-description`} autoComplete="off" rows={2} value={item.description} onChange={(event) => updateTransaction(item.id, { description: event.target.value })} /></label>
+                        <label><span>{copy.insights.tableHeaders[3]}</span><input name={`${item.id}-mobile-counterparty`} autoComplete="off" value={item.counterparty} onChange={(event) => updateTransaction(item.id, { counterparty: event.target.value })} /></label>
                         <div className="transaction-card-amounts">
-                          <label><span>{copy.insights.tableHeaders[4]}</span><input type="number" step="any" inputMode="decimal" value={item.debit} onChange={(event) => updateTransaction(item.id, { debit: Number(event.target.value) || 0 })} /></label>
-                          <label><span>{copy.insights.tableHeaders[5]}</span><input type="number" step="any" inputMode="decimal" value={item.credit} onChange={(event) => updateTransaction(item.id, { credit: Number(event.target.value) || 0 })} /></label>
-                          <label><span>{copy.insights.tableHeaders[6]}</span><input type="number" step="any" inputMode="decimal" value={item.balance} onChange={(event) => updateTransaction(item.id, { balance: Number(event.target.value) || 0 })} /></label>
+                          <label><span>{copy.insights.tableHeaders[4]}</span><MoneyInput ariaLabel={copy.insights.tableHeaders[4]} name={`${item.id}-mobile-debit`} value={item.debit} language={language} onChange={(value) => updateTransaction(item.id, { debit: value })} /></label>
+                          <label><span>{copy.insights.tableHeaders[5]}</span><MoneyInput ariaLabel={copy.insights.tableHeaders[5]} name={`${item.id}-mobile-credit`} value={item.credit} language={language} onChange={(value) => updateTransaction(item.id, { credit: value })} /></label>
+                          <label><span>{copy.insights.tableHeaders[6]}</span><MoneyInput ariaLabel={copy.insights.tableHeaders[6]} name={`${item.id}-mobile-balance`} value={item.balance} language={language} onChange={(value) => updateTransaction(item.id, { balance: value })} /></label>
                         </div>
-                        <label><span>{copy.insights.tableHeaders[7]}</span><select value={item.category} onChange={(event) => updateTransaction(item.id, { category: event.target.value as CategoryKey })}>{categoryKeys.map((category) => <option value={category} key={category}>{copy.categories[category]}</option>)}</select></label>
+                        <label><span>{copy.insights.tableHeaders[7]}</span><select name={`${item.id}-mobile-category`} value={item.category} onChange={(event) => updateTransaction(item.id, { category: event.target.value as CategoryKey })}>{categoryKeys.map((category) => <option value={category} key={category}>{copy.categories[category]}</option>)}</select></label>
                         <button className="row-delete" type="button" onClick={() => removeTransaction(item.id)}>{copy.actions.delete}</button>
                       </article>
                     );

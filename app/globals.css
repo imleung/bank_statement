@@ -1301,6 +1301,7 @@ main {
 }
 
 .master-panel {
+  overflow: hidden;
   padding: 0;
 }
 
@@ -1321,8 +1322,9 @@ main {
 
 .transaction-filters input,
 .transaction-filters select {
-  font-size: 10px;
-  padding: 9px 10px;
+  font-size: 12px;
+  min-height: 42px;
+  padding: 10px 11px;
 }
 
 .transaction-filters .issues-filter {
@@ -1362,24 +1364,68 @@ main {
 
 .master-table th {
   font-size: 11px;
-  padding: 12px 16px;
+  padding: 14px 12px;
 }
 
 .master-table td {
   border-top: 1px solid #ebeeeb;
   font-size: 12px;
   line-height: 1.5;
-  max-width: 320px;
-  min-width: 100px;
-  padding: 13px 16px;
+  max-width: none;
+  min-width: 0;
+  padding: 10px 12px;
 }
 
-.master-table td:nth-child(3) {
-  min-width: 260px;
+.master-table-wrap {
+  overscroll-behavior-inline: contain;
+  scrollbar-gutter: stable;
+}
+
+.master-table {
+  min-width: 1700px;
+  table-layout: fixed;
+}
+
+.master-table .column-date { width: 155px; }
+.master-table .column-source { width: 180px; }
+.master-table .column-description { width: 330px; }
+.master-table .column-counterparty { width: 210px; }
+.master-table .column-money { width: 160px; }
+.master-table .column-balance { width: 180px; }
+.master-table .column-category { width: 205px; }
+.master-table .column-action { width: 100px; }
+
+.editable-table th:first-child,
+.editable-table td:first-child {
+  left: 0;
+  position: sticky;
+}
+
+.editable-table th:nth-child(2),
+.editable-table td:nth-child(2) {
+  box-shadow: 10px 0 18px rgba(17, 35, 31, 0.06);
+  left: 155px;
+  position: sticky;
+}
+
+.editable-table th:first-child,
+.editable-table th:nth-child(2) {
+  z-index: 3;
 }
 
 .editable-table td {
-  vertical-align: top;
+  background: white;
+  vertical-align: middle;
+  z-index: 1;
+}
+
+.editable-table tbody tr:hover td {
+  background: #fafcf9;
+}
+
+.editable-table td:first-child,
+.editable-table td:nth-child(2) {
+  z-index: 2;
 }
 
 .editable-table tr.has-issues td:first-child {
@@ -1389,24 +1435,42 @@ main {
 .editable-table input,
 .editable-table select,
 .editable-table textarea {
-  background: transparent;
-  border: 1px solid transparent;
+  background: #f8faf8;
+  border: 1px solid #dfe5e1;
+  border-radius: 4px;
   color: inherit;
   font-size: 12px;
+  min-height: 40px;
   min-width: 90px;
-  padding: 7px;
-  resize: vertical;
+  padding: 9px 10px;
+  transition: background 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
   width: 100%;
 }
 
 .editable-table input:hover,
 .editable-table select:hover,
 .editable-table textarea:hover,
-.editable-table input:focus,
-.editable-table select:focus,
-.editable-table textarea:focus {
+.editable-table input:focus-visible,
+.editable-table select:focus-visible,
+.editable-table textarea:focus-visible {
   background: white;
-  border-color: var(--line);
+  border-color: var(--green-bright);
+}
+
+.editable-table textarea {
+  min-height: 62px;
+  overflow: hidden;
+  resize: none;
+}
+
+.editable-table .money-input {
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+.editable-table td:nth-child(7) > small {
+  padding-right: 10px;
+  text-align: right;
 }
 
 .editable-table td > strong,
@@ -1439,6 +1503,10 @@ main {
   font-size: 11px;
   font-weight: 800;
   padding: 8px;
+}
+
+.row-delete:hover {
+  background: var(--orange-soft);
 }
 
 .empty-results {
@@ -1876,7 +1944,13 @@ footer > span {
   }
 
   .transaction-card textarea {
-    resize: vertical;
+    min-height: 72px;
+    resize: none;
+  }
+
+  .transaction-card .money-input {
+    font-variant-numeric: tabular-nums;
+    text-align: right;
   }
 
   .transaction-card label > span,
