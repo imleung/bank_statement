@@ -34,7 +34,8 @@ body {
 
 button,
 input,
-select {
+select,
+textarea {
   font: inherit;
 }
 
@@ -48,6 +49,7 @@ button:focus-visible,
 a:focus-visible,
 input:focus-visible,
 select:focus-visible,
+textarea:focus-visible,
 label:focus-within {
   outline: 3px solid rgba(31, 169, 121, 0.28);
   outline-offset: 3px;
@@ -602,6 +604,96 @@ main {
   margin: 0;
 }
 
+.import-settings {
+  background: rgba(255, 255, 255, 0.52);
+  border: 1px solid var(--line);
+  border-top: 0;
+}
+
+.import-settings summary {
+  align-items: center;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  list-style: none;
+  padding: 17px 20px;
+}
+
+.import-settings summary::-webkit-details-marker {
+  display: none;
+}
+
+.import-settings summary span {
+  display: grid;
+  gap: 4px;
+}
+
+.import-settings summary strong {
+  color: var(--green-deep);
+  font-size: 12px;
+}
+
+.import-settings summary small,
+.import-settings > p {
+  color: var(--muted);
+  font-size: 10px;
+}
+
+.import-settings summary i {
+  color: var(--green);
+  font-size: 20px;
+  font-style: normal;
+  transition: transform 160ms ease;
+}
+
+.import-settings[open] summary i {
+  transform: rotate(45deg);
+}
+
+.import-settings-grid {
+  border-top: 1px solid var(--line);
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(3, 1fr);
+  padding: 20px 20px 12px;
+}
+
+.import-settings-grid label,
+.transaction-filters label,
+.transaction-card label {
+  display: grid;
+  gap: 7px;
+}
+
+.import-settings-grid label > span,
+.transaction-filters label > span,
+.transaction-card label > span {
+  color: var(--muted);
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.import-settings select,
+.transaction-filters input,
+.transaction-filters select,
+.transaction-card input,
+.transaction-card select,
+.transaction-card textarea {
+  background: white;
+  border: 1px solid var(--line);
+  color: var(--ink);
+  min-width: 0;
+  padding: 10px 11px;
+  width: 100%;
+}
+
+.import-settings > p {
+  margin: 0;
+  padding: 0 20px 20px;
+}
+
 .error-message {
   background: var(--orange-soft);
   border-left: 4px solid var(--orange);
@@ -610,6 +702,36 @@ main {
   font-weight: 700;
   margin-top: 22px;
   padding: 16px 18px;
+}
+
+.file-errors {
+  background: var(--orange-soft);
+  border-left: 4px solid var(--orange);
+  color: #7d3420;
+  margin-top: 22px;
+  padding: 16px 18px;
+}
+
+.file-errors > strong {
+  font-size: 12px;
+}
+
+.file-errors ul {
+  display: grid;
+  gap: 7px;
+  list-style: none;
+  margin: 12px 0 0;
+  padding: 0;
+}
+
+.file-errors li {
+  display: grid;
+  font-size: 10px;
+  gap: 2px;
+}
+
+.file-errors li span {
+  color: #96604e;
 }
 
 .file-stack {
@@ -1061,6 +1183,123 @@ main {
 .source-strip b { color: #6ce0b2; }
 .source-strip em { color: #ff9a7d; font-style: normal; }
 
+.review-panel {
+  background: #fbfbf7;
+  color: var(--ink);
+  margin-bottom: 28px;
+  padding: 26px 28px;
+}
+
+.review-panel.review-success {
+  border-top: 3px solid var(--green-bright);
+}
+
+.review-heading {
+  align-items: start;
+  display: flex;
+  justify-content: space-between;
+}
+
+.review-heading > div {
+  display: grid;
+  gap: 6px;
+}
+
+.review-heading span {
+  color: var(--green);
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+
+.review-heading h3 {
+  font-family: Georgia, serif;
+  font-size: 25px;
+  font-weight: 500;
+  margin: 0;
+}
+
+.review-heading p {
+  color: var(--muted);
+  font-size: 10px;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.review-heading > strong {
+  background: var(--mint);
+  color: var(--green-deep);
+  font-size: 10px;
+  padding: 7px 9px;
+}
+
+.review-grid {
+  display: grid;
+  gap: 1px;
+  grid-template-columns: repeat(4, 1fr);
+  margin-top: 22px;
+}
+
+.review-grid > div {
+  background: #f0f1eb;
+  display: grid;
+  gap: 5px;
+  padding: 15px;
+}
+
+.review-grid span,
+.review-grid small {
+  color: var(--muted);
+  font-size: 9px;
+}
+
+.review-grid strong {
+  color: var(--green-deep);
+  font-family: Georgia, serif;
+  font-size: 22px;
+  font-weight: 500;
+}
+
+.review-message {
+  color: var(--green);
+  font-size: 11px;
+  font-weight: 800;
+  margin: 18px 0 0;
+}
+
+.review-issues {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 18px;
+}
+
+.review-issues button,
+.issue-badges span {
+  background: var(--orange-soft);
+  border: 0;
+  color: #883a23;
+  font-size: 8px;
+  font-weight: 800;
+  padding: 6px 8px;
+}
+
+.review-issues button {
+  cursor: pointer;
+}
+
+.review-issues button b {
+  margin-right: 5px;
+}
+
+.review-issues > span {
+  color: var(--muted);
+  font-size: 9px;
+  margin-left: auto;
+}
+
 .master-panel {
   padding: 0;
 }
@@ -1068,6 +1307,57 @@ main {
 .master-panel .panel-heading {
   border-bottom: 1px solid var(--line);
   padding: 24px 28px;
+}
+
+.transaction-filters {
+  align-items: end;
+  background: #f4f4ee;
+  border-bottom: 1px solid var(--line);
+  display: grid;
+  gap: 12px;
+  grid-template-columns: minmax(220px, 1.8fr) repeat(3, minmax(120px, 1fr));
+  padding: 18px 24px;
+}
+
+.transaction-filters input,
+.transaction-filters select {
+  font-size: 10px;
+  padding: 9px 10px;
+}
+
+.transaction-filters .issues-filter {
+  align-items: center;
+  display: flex;
+  gap: 8px;
+}
+
+.transaction-filters .issues-filter input {
+  accent-color: var(--green);
+  height: 15px;
+  width: 15px;
+}
+
+.transaction-filters .issues-filter span {
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.filter-reset {
+  background: none;
+  border: 0;
+  color: var(--green);
+  cursor: pointer;
+  font-size: 9px;
+  font-weight: 800;
+  justify-self: start;
+  padding: 0;
+}
+
+.transaction-filters > p {
+  color: var(--muted);
+  font-size: 9px;
+  justify-self: end;
+  margin: 0;
 }
 
 .master-table th {
@@ -1085,6 +1375,108 @@ main {
 
 .master-table td:nth-child(3) {
   min-width: 260px;
+}
+
+.editable-table td {
+  vertical-align: top;
+}
+
+.editable-table tr.has-issues td:first-child {
+  border-left: 3px solid var(--orange);
+}
+
+.editable-table input,
+.editable-table select,
+.editable-table textarea {
+  background: transparent;
+  border: 1px solid transparent;
+  color: inherit;
+  font-size: 10px;
+  min-width: 90px;
+  padding: 7px;
+  resize: vertical;
+  width: 100%;
+}
+
+.editable-table input:hover,
+.editable-table select:hover,
+.editable-table textarea:hover,
+.editable-table input:focus,
+.editable-table select:focus,
+.editable-table textarea:focus {
+  background: white;
+  border-color: var(--line);
+}
+
+.editable-table td > strong,
+.editable-table td > small {
+  display: block;
+}
+
+.editable-table td > small {
+  color: var(--muted);
+  font-size: 8px;
+  margin-top: 5px;
+}
+
+.issue-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 6px;
+}
+
+.row-delete {
+  background: transparent;
+  border: 0;
+  color: var(--orange);
+  cursor: pointer;
+  font-size: 9px;
+  font-weight: 800;
+  padding: 8px;
+}
+
+.empty-results {
+  color: var(--muted);
+  font-size: 11px;
+  padding: 44px 24px;
+  text-align: center;
+}
+
+.transaction-cards {
+  display: none;
+}
+
+.undo-toast {
+  align-items: center;
+  background: var(--ink);
+  bottom: 22px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.24);
+  color: white;
+  display: flex;
+  font-size: 11px;
+  gap: 16px;
+  left: 50%;
+  max-width: calc(100vw - 40px);
+  padding: 13px 16px;
+  position: fixed;
+  transform: translateX(-50%);
+  z-index: 20;
+}
+
+.undo-toast button {
+  background: none;
+  border: 0;
+  color: #6ce0b2;
+  cursor: pointer;
+  font-size: 10px;
+  font-weight: 800;
+  padding: 0;
+}
+
+.undo-toast .undo-close {
+  color: rgba(255, 255, 255, 0.55);
+  font-size: 18px;
 }
 
 .money {
@@ -1381,6 +1773,10 @@ footer > span {
     padding: 30px 20px;
   }
 
+  .import-settings-grid {
+    grid-template-columns: 1fr;
+  }
+
   .demo-row {
     align-items: start;
     display: grid;
@@ -1406,6 +1802,88 @@ footer > span {
 
   .insights-section {
     padding: 75px 20px 90px;
+  }
+
+  .review-panel {
+    padding: 22px;
+  }
+
+  .review-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .transaction-filters {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    padding: 17px;
+  }
+
+  .filter-search {
+    grid-column: 1 / -1;
+  }
+
+  .desktop-transactions {
+    display: none;
+  }
+
+  .transaction-cards {
+    display: grid;
+    gap: 1px;
+  }
+
+  .transaction-card {
+    background: white;
+    border-left: 3px solid transparent;
+    display: grid;
+    gap: 14px;
+    padding: 20px;
+  }
+
+  .transaction-card.has-issues {
+    border-color: var(--orange);
+  }
+
+  .transaction-card + .transaction-card {
+    border-top: 1px solid var(--line);
+  }
+
+  .transaction-card-heading {
+    align-items: start;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .transaction-card-heading > div {
+    display: grid;
+    gap: 4px;
+  }
+
+  .transaction-card-heading small {
+    color: var(--muted);
+    font-size: 9px;
+  }
+
+  .transaction-card-heading > span {
+    background: var(--mint);
+    color: var(--green-deep);
+    font-size: 8px;
+    font-weight: 800;
+    padding: 5px 7px;
+  }
+
+  .transaction-card textarea {
+    resize: vertical;
+  }
+
+  .transaction-card-amounts {
+    display: grid;
+    gap: 10px;
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .transaction-card .row-delete {
+    border: 1px solid var(--orange-soft);
+    justify-self: start;
+    padding: 9px 12px;
   }
 
   .bar-chart {
@@ -1506,6 +1984,20 @@ footer > span {
 
   .stat-grid {
     grid-template-columns: 1fr;
+  }
+
+  .review-heading {
+    gap: 14px;
+  }
+
+  .review-grid,
+  .transaction-filters,
+  .transaction-card-amounts {
+    grid-template-columns: 1fr;
+  }
+
+  .transaction-filters > p {
+    justify-self: start;
   }
 
   .chart-panel,
